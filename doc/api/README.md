@@ -144,3 +144,52 @@ Issue:
 - iid - is unique only in scope of a single project. When you browse issues or merge requests with Web UI, you see iid.
 
 So if you want to get issue with api you use `http://host/api/v3/.../issues/:id.json`. But when you want to create a link to web page - use  `http:://host/project/issues/:iid.json`
+
+## Data validation and error reporting
+
+When working with the API you may encounter validation errors. In such case, the API will answer with an HTTP `400` status.
+Such errors appear in two cases:
+
+* A required attribute of the API request is missing, e.g. the title of an issue is not given
+* An attribute did not pass the validation, e.g. user bio is too long
+
+When an attribute is missing, you will get something like:
+
+    HTTP/1.1 400 Bad Request
+    Content-Type: application/json
+    
+    {
+        "message":"400 (Bad request) \"title\" not given"
+    }
+
+When a validation error occurs, error messages will be different. They will hold all details of validation errors:
+
+    HTTP/1.1 400 Bad Request
+    Content-Type: application/json
+    
+    {
+        "message": {
+            "bio": [
+                "is too long (maximum is 255 characters)"
+            ]
+        }
+    }
+
+This makes error messages more machine-readable. The format can be described as follow:
+
+    {
+        "message": {
+            "<property-name>": [
+                "<error-message>",
+                "<error-message>",
+                ...
+            ],
+            "<embed-entity>": {
+                "<property-name>": [
+                    "<error-message>",
+                    "<error-message>",
+                    ...
+                ],
+            }
+        }
+    }
