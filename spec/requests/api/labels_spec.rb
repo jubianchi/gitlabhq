@@ -47,7 +47,7 @@ describe API::API, api: true  do
            name: 'Foo',
            color: '#FFAA'
       response.status.should == 400
-      json_response['message'].should == 'Color is invalid'
+      json_response['message']['color'].should == ['is invalid']
     end
 
     it 'should return 400 for invalid name' do
@@ -55,7 +55,7 @@ describe API::API, api: true  do
            name: '?',
            color: '#FFAABB'
       response.status.should == 400
-      json_response['message'].should == 'Title is invalid'
+      json_response['message']['title'].should == ['is invalid']
     end
 
     it 'should return 409 if label already exists' do
@@ -76,7 +76,7 @@ describe API::API, api: true  do
     it 'should return 404 for non existing label' do
       delete api("/projects/#{project.id}/labels", user), name: 'label2'
       response.status.should == 404
-      json_response['message'].should == 'Label not found'
+      json_response['message'].should == '404 Label Not Found'
     end
 
     it 'should return 400 for wrong parameters' do
@@ -124,11 +124,14 @@ describe API::API, api: true  do
     it 'should return 400 if no label name given' do
       put api("/projects/#{project.id}/labels", user), new_name: 'label2'
       response.status.should == 400
+      json_response['message'].should == '400 (Bad request) "name" not given'
     end
 
     it 'should return 400 if no new parameters given' do
       put api("/projects/#{project.id}/labels", user), name: 'label1'
       response.status.should == 400
+      json_response['message'].should == 'Required parameters '\
+                                         '"new_name" or "color" missing'
     end
 
     it 'should return 400 for invalid name' do
@@ -137,7 +140,7 @@ describe API::API, api: true  do
           new_name: '?',
           color: '#FFFFFF'
       response.status.should == 400
-      json_response['message'].should == 'Title is invalid'
+      json_response['message']['title'].should == ['is invalid']
     end
 
     it 'should return 400 for invalid name' do
@@ -145,7 +148,7 @@ describe API::API, api: true  do
           name: 'label1',
           color: '#FF'
       response.status.should == 400
-      json_response['message'].should == 'Color is invalid'
+      json_response['message']['color'].should == ['is invalid']
     end
   end
 end
