@@ -67,7 +67,7 @@ module API
 
           present issue, with: Entities::Issue
         else
-          not_found!
+          render_validation_error!(issue)
         end
       end
 
@@ -106,7 +106,7 @@ module API
 
           present issue, with: Entities::Issue
         else
-          not_found!
+          render_validation_error!(issue)
         end
       end
 
