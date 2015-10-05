@@ -400,6 +400,10 @@ class Project < ActiveRecord::Base
     self.issues_enabled && !self.default_issues_tracker?
   end
 
+  def milestone_exists?(milestone_id)
+    self.milestones.where(iid: milestone_id).first.present?
+  end
+
   def build_missing_services
     services_templates = Service.where(template: true)
 

@@ -150,6 +150,7 @@ module Gitlab
         Gitlab::Markdown::IssueReferenceFilter,
         Gitlab::Markdown::ExternalIssueReferenceFilter,
         Gitlab::Markdown::MergeRequestReferenceFilter,
+        Gitlab::Markdown::MilestoneReferenceFilter,
         Gitlab::Markdown::SnippetReferenceFilter,
         Gitlab::Markdown::CommitRangeReferenceFilter,
         Gitlab::Markdown::CommitReferenceFilter,

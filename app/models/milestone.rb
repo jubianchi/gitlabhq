@@ -47,6 +47,20 @@ class Milestone < ActiveRecord::Base
     state :active
   end
 
+  def self.reference_prefix
+    '§'
+  end
+
+  # Pattern used to extract `!123` merge request references from text
+  #
+  # This pattern supports cross-project references.
+  def self.reference_pattern
+    %r{
+      (#{Project.reference_pattern})?
+      #{Regexp.escape(reference_prefix)}(?<milestone>\d+)
+    }x
+  end
+
   class << self
     def search(query)
       query = "%#{query}%"

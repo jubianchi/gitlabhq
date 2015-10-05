@@ -36,10 +36,10 @@ ActiveRecord::Schema.define(version: 20150930095736) do
     t.integer  "default_branch_protection",    default: 2
     t.boolean  "twitter_sharing_enabled",      default: true
     t.text     "restricted_visibility_levels"
-    t.boolean  "version_check_enabled",        default: true
     t.integer  "max_attachment_size",          default: 10,    null: false
     t.integer  "default_project_visibility"
     t.integer  "default_snippet_visibility"
+    t.boolean  "version_check_enabled",        default: true
     t.text     "restricted_signup_domains"
     t.boolean  "user_oauth_applications",      default: true
     t.string   "after_sign_out_path"
@@ -593,10 +593,10 @@ ActiveRecord::Schema.define(version: 20150930095736) do
     t.string   "import_url"
     t.integer  "visibility_level",       default: 0,        null: false
     t.boolean  "archived",               default: false,    null: false
-    t.string   "avatar"
     t.string   "import_status"
     t.float    "repository_size",        default: 0.0
     t.integer  "star_count",             default: 0,        null: false
+    t.string   "avatar"
     t.string   "import_type"
     t.string   "import_source"
     t.integer  "commit_count",           default: 0
@@ -732,7 +732,6 @@ ActiveRecord::Schema.define(version: 20150930095736) do
     t.integer  "notification_level",         default: 1,     null: false
     t.datetime "password_expires_at"
     t.integer  "created_by_id"
-    t.datetime "last_credential_check_at"
     t.string   "avatar"
     t.string   "confirmation_token"
     t.datetime "confirmed_at"
@@ -740,16 +739,17 @@ ActiveRecord::Schema.define(version: 20150930095736) do
     t.string   "unconfirmed_email"
     t.boolean  "hide_no_ssh_key",            default: false
     t.string   "website_url",                default: "",    null: false
+    t.datetime "last_credential_check_at"
     t.string   "notification_email"
     t.boolean  "hide_no_password",           default: false
     t.boolean  "password_automatically_set", default: false
     t.string   "location"
+    t.string   "public_email",               default: "",    null: false
     t.string   "encrypted_otp_secret"
     t.string   "encrypted_otp_secret_iv"
     t.string   "encrypted_otp_secret_salt"
     t.boolean  "otp_required_for_login",     default: false, null: false
     t.text     "otp_backup_codes"
-    t.string   "public_email",               default: "",    null: false
     t.integer  "dashboard",                  default: 0
     t.integer  "project_view",               default: 0
     t.integer  "consumed_timestep"
@@ -764,6 +764,30 @@ ActiveRecord::Schema.define(version: 20150930095736) do
   add_index "users", ["name"], name: "index_users_on_name", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["username"], name: "index_users_on_username", using: :btree
+
+  create_table "users_groups", force: true do |t|
+    t.integer  "group_access",                   null: false
+    t.integer  "group_id",                       null: false
+    t.integer  "user_id",                        null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "notification_level", default: 3, null: false
+  end
+
+  add_index "users_groups", ["user_id"], name: "index_users_groups_on_user_id", using: :btree
+
+  create_table "users_projects", force: true do |t|
+    t.integer  "user_id",                        null: false
+    t.integer  "project_id",                     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "project_access",     default: 0, null: false
+    t.integer  "notification_level", default: 3, null: false
+  end
+
+  add_index "users_projects", ["project_access"], name: "index_users_projects_on_project_access", using: :btree
+  add_index "users_projects", ["project_id"], name: "index_users_projects_on_project_id", using: :btree
+  add_index "users_projects", ["user_id"], name: "index_users_projects_on_user_id", using: :btree
 
   create_table "users_star_projects", force: true do |t|
     t.integer  "project_id", null: false
